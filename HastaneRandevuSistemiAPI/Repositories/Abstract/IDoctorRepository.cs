@@ -5,7 +5,7 @@ namespace HastaneRandevuSistemiAPI.Repositories.Abstract
 {
     public interface IDoctorRepository:IEntityRepository<Doctor,int>
     {
-        Doctor GetAllPatients();
-       
+        List<Patient> GetAllPatients(int doctorId);
+
     }
 }

@@ -6,8 +6,7 @@ namespace HastaneRandevuSistemiAPI.Repository.Abstract;
 public interface IEntityRepository<T, TKey> where T : class, new()
 {
     IQueryable<T> GetAll();
-    IQueryable<T> GetById(TKey id); // ID tipi generic
+    Task<T> GetByIdAsync(TKey id);
     Task AddAsync(T entity);
-    void Delete(T entity);
-    void Update(T entity);
+    Task DeleteAsync(T entity);
 }

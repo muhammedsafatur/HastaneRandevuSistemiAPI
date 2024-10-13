@@ -1,4 +1,5 @@
 ﻿using HastaneRandevuSistemiAPI.Models.Dto.Patient.Request;
+using HastaneRandevuSistemiAPI.Models.Entities.Enums;
 
 namespace HastaneRandevuSistemiAPI.Models.Entities
 {
@@ -9,6 +10,7 @@ namespace HastaneRandevuSistemiAPI.Models.Entities
         public string? Email { get; set; }
         public List<Appointment> Appointments { get; set; }=new List<Appointment>();
 
+        public Branch branch { get; set; }
         public static explicit operator Patient(AddPatientRequestDto dto)
         {
             return new Patient

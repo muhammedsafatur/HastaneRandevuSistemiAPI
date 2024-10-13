@@ -1,54 +1,69 @@
-﻿using HastaneRandevuSistemiAPI.Models.Entities;
+﻿using HastaneRandevuSistemiAPI.Contexts;
+using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.Models.Entities.Enums;
 using HastaneRandevuSistemiAPI.Repositories.Abstract;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
 {
     public class PatientRepository : IPatientRepository
     {
-        public Task AddAsync(Patient entity)
+        private readonly HospitalDbContext _context;
+
+        public PatientRepository(HospitalDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public void Delete(Patient entity)
+        public async Task AddAsync(Patient entity)
         {
-            throw new NotImplementedException();
+            await _context.Patients.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Patient entity)
+        {
+            var patientToRemove = await GetByIdAsync(entity.Id);
+            if (patientToRemove != null)
+            {
+                _context.Patients.Remove(patientToRemove);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public IQueryable<Patient> GetAll()
         {
-            throw new NotImplementedException();
-        }
-
-
-
-        public List<Patient> GetAllPatientsByDocBranch(Branch branch)
-        {
-            throw new NotImplementedException();
+            return _context.Patients.AsQueryable();
         }
 
      
 
-        public List<Patient> GetAllPatientsByDoctor(int id)
+        public async Task<List<Patient>> GetAllPatientsByDoctorAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments
+                .Where(a => a.DoctorId == id)
+                .Select(a => a.Patient)
+                .ToListAsync();
         }
 
-        public IQueryable<Patient> GetById(string id)
+        public async Task<Patient> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            return await _context.Patients.FindAsync(id);
         }
 
-        public Patient GetPatientbyTc(string tc)
+        public async Task<Patient> GetPatientbyTcAsync(string tc)
         {
-            throw new NotImplementedException();
+            return await _context.Patients
+                .FirstOrDefaultAsync(p => p.Tc == tc); // Patient sınıfında Tc özelliği olmalı
         }
 
-        public void Update(Patient entity)
+        public async Task UpdateAsync(Patient entity)
         {
-            throw new NotImplementedException();
+            _context.Patients.Update(entity);
+            await _context.SaveChangesAsync();
         }
     }
-}
 }

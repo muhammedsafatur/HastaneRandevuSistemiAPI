@@ -1,44 +1,63 @@
-﻿using HastaneRandevuSistemiAPI.Models.Entities;
+﻿using HastaneRandevuSistemiAPI.Contexts;
+using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.Repositories.Abstract;
-using HastaneRandevuSistemiAPI.Repository.Abstract;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
 {
     public class AppointmentRepository : IAppointmentRepository
     {
-        public Task AddAsync(Appointment entity)
+        private readonly HospitalDbContext _context;
+
+        public AppointmentRepository(HospitalDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public void Delete(Appointment entity)
+        public async Task AddAsync(Appointment entity)
         {
-            throw new NotImplementedException();
+            await _context.Appointments.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Appointment entity)
+        {
+            _context.Appointments.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
         public IQueryable<Appointment> GetAll()
         {
-            throw new NotImplementedException();
+            return _context.Appointments.AsQueryable();
         }
 
-        public Appointment GetByDate(DateTime date)
+        public async Task<Appointment> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments.FindAsync(id);
         }
 
-        public Appointment GetByDoc(int doctorId)
+        public async Task<List<Appointment>> GetByDoctorIdAsync(int doctorId)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .ToListAsync();
         }
 
-        public IQueryable<Appointment> GetById(Guid id)
+        public async Task<List<Appointment>> GetByDateAsync(DateTime date)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments
+                .Where(a => a.AppointmentDate.Date == date.Date)
+                .ToListAsync();
         }
 
-        public void Update(Appointment entity)
+        public async Task UpdateAsync(Appointment entity)
         {
-            throw new NotImplementedException();
+            _context.Appointments.Update(entity);
+            await _context.SaveChangesAsync();
         }
     }
 }

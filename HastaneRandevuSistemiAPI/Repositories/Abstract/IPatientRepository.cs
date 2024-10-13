@@ -1,12 +1,9 @@
-﻿using HastaneRandevuSistemiAPI.Models.Entities;
-using HastaneRandevuSistemiAPI.Models.Entities.Enums;
+﻿using HastaneRandevuSistemiAPI.Models.Entities.Enums;
+using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.Repository.Abstract;
 
-namespace HastaneRandevuSistemiAPI.Repositories.Abstract;
-
-public interface IPatientRepository:IEntityRepository<Patient,string>
+public interface IPatientRepository : IEntityRepository<Patient, string>
 {
-    Patient GetPatientbyTc(string tc);
-    List<Patient> GetAllPatientsByDoctor(int id);
-    List<Patient>GetAllPatientsByDocBranch(Branch branch);
+    Task<Patient> GetPatientbyTcAsync(string tc);
+    Task<List<Patient>> GetAllPatientsByDoctorAsync(int id);
 }

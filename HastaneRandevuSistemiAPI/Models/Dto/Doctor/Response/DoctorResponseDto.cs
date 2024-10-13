@@ -3,7 +3,7 @@ using HastaneRandevuSistemiAPI.Models.Entities.Enums;
 
 namespace HastaneRandevuSistemiAPI.Models.Dto
 {
-    public class DoctorDto
+    public class DoctorResponseDto
     {public int Id { get; set; }
         public string? Name { get; set; }
         public Branch Branch { get; set; }

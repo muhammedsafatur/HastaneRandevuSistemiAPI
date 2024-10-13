@@ -1,33 +1,47 @@
-﻿
+﻿using HastaneRandevuSistemiAPI.Contexts;
 using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.Repository.Abstract;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete;
-
-public class EntityRepository<T> : IEntityRepository<T> where T : EntityBase<T,string>
+namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
 {
-    public Task AddAsync(T entity)
+    public class EntityRepository<T, TKey> : IEntityRepository<T, TKey> where T : class, new()
     {
-        throw new NotImplementedException();
-    }
+        private readonly HospitalDbContext _context;
 
-    public void Delete(T entity)
-    {
-        throw new NotImplementedException();
-    }
+        public EntityRepository(HospitalDbContext context)
+        {
+            _context = context;
+        }
 
-    public IQueryable<T> GetAll()
-    {
-        throw new NotImplementedException();
-    }
+        public async Task AddAsync(T entity)
+        {
+            await _context.Set<T>().AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
 
-    public IQueryable<T> GetById(string id)
-    {
-        throw new NotImplementedException();
-    }
+        public async Task DeleteAsync(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+            await _context.SaveChangesAsync();
+        }
 
-    public void Update(T entity)
-    {
-        throw new NotImplementedException();
+        public IQueryable<T> GetAll()
+        {
+            return _context.Set<T>().AsQueryable();
+        }
+
+        public async Task<T> GetByIdAsync(TKey id)
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
+
+        public async Task UpdateAsync(T entity)
+        {
+            _context.Set<T>().Update(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 }

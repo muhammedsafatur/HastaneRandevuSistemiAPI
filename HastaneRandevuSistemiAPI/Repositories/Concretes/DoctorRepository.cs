@@ -1,38 +1,56 @@
-﻿using HastaneRandevuSistemiAPI.Models.Entities;
+﻿using HastaneRandevuSistemiAPI.Contexts;
+using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.Repositories.Abstract;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
 {
     public class DoctorRepository : IDoctorRepository
     {
-        public Task AddAsync(Doctor entity)
+        private readonly HospitalDbContext _context;
+
+        public DoctorRepository(HospitalDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public void Delete(Doctor entity)
+        public async Task AddAsync(Doctor entity)
         {
-            throw new NotImplementedException();
+            await _context.Doctors.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Doctor entity)
+        {
+            _context.Doctors.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
         public IQueryable<Doctor> GetAll()
         {
-            throw new NotImplementedException();
+            return _context.Doctors.AsQueryable();
         }
 
-        public Doctor GetAllPatients()
+        public async Task<Doctor> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Doctors.FindAsync(id);
         }
 
-        public IQueryable<Doctor> GetById(int id)
+        public async Task UpdateAsync(Doctor entity)
         {
-            throw new NotImplementedException();
+            _context.Doctors.Update(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(Doctor entity)
+        public List<Patient> GetAllPatients(int doctorId)
         {
-            throw new NotImplementedException();
+            return _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .Select(a => a.Patient)
+                .ToList();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace HastaneRandevuSistemiAPI.Models.Dto
 {
-    public class AppointmentDto
+    public class AppointmentResponseDto
     {
         public Guid Id { get; set; }
         public DateTime AppointmentDate { get; set; }
