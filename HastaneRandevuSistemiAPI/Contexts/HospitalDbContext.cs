@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
+namespace HastaneRandevuSistemiAPI.Contexts
 {
     public class HospitalDbContext : DbContext
     {

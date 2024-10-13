@@ -4,7 +4,7 @@ using HastaneRandevuSistemiAPI.Repository.Abstract;
 
 namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete;
 
-public class GenericRepository<T> : IGenericRepository<T> where T : EntityBase<T,string>
+public class EntityRepository<T> : IEntityRepository<T> where T : EntityBase<T,string>
 {
     public Task AddAsync(T entity)
     {

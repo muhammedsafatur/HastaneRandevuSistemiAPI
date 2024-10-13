@@ -1,7 +1,8 @@
-﻿namespace HastaneRandevuSistemiAPI.Models.Entities
+﻿namespace HastaneRandevuSistemiAPI.Models.Entities.Enums
 {
     public enum Branch
-    {Genel,
+    {
+        Genel,
         KBB,
         Gastrontoloji,
         Ortopedi,
