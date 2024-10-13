@@ -1,7 +1,8 @@
 ﻿using HastaneRandevuSistemiAPI.Models.Entities;
+using HastaneRandevuSistemiAPI.Models.Entities.Enums;
 using HastaneRandevuSistemiAPI.Repositories.Abstract;
 using HastaneRandevuSistemiAPI.ServiceLayer.Abstracts;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,57 +17,44 @@ namespace HastaneRandevuSistemiAPI.ServiceLayer.Concretes
             _doctorRepository = doctorRepository;
         }
 
-        public async Task AddDoctorAsync(Doctor doctor)
+        public async Task AddAsync(Doctor entity)
         {
-            if (doctor == null)
-            {
-                throw new ArgumentNullException(nameof(doctor), "Doctor cannot be null.");
-            }
-            await _doctorRepository.AddAsync(doctor);
+            await _doctorRepository.AddAsync(entity);
         }
 
-        public async Task<Doctor> GetDoctorByIdAsync(int id)
+        public async Task DeleteAsync(Doctor entity)
         {
-            var doctor = await _doctorRepository.GetByIdAsync(id);
-            if (doctor == null)
-            {
-                throw new KeyNotFoundException($"Doctor with ID {id} not found.");
-            }
-            return doctor;
+            await _doctorRepository.DeleteAsync(entity.Id);
         }
 
-        public async Task<List<Doctor>> GetAllDoctorsAsync()
+        public async Task<List<Doctor>> GetAllAsync()
         {
-            return await _doctorRepository.GetAll().ToListAsync(); // IQueryable'ı listeye çeviriyoruz
+            return await _doctorRepository.GetAllAsync();
         }
 
-        public async Task UpdateDoctorAsync(Doctor doctor)
+        public async Task<List<Doctor>> GetAllDoctorsWithAppointmentsAsync()
         {
-            if (doctor == null)
-            {
-                throw new ArgumentNullException(nameof(doctor), "Doctor cannot be null.");
-            }
-            var existingDoctor = await _doctorRepository.GetByIdAsync(doctor.Id);
-            if (existingDoctor == null)
-            {
-                throw new KeyNotFoundException($"Doctor with ID {doctor.Id} not found.");
-            }
-            await _doctorRepository.UpdateAsync(doctor);
+            return await _doctorRepository.GetAllDoctorsWithAppointmentsAsync();
         }
 
-        public async Task DeleteDoctorAsync(int id)
+        public async Task<Doctor> GetByBranchAsync(Branch branch)
         {
-            var doctor = await _doctorRepository.GetByIdAsync(id);
-            if (doctor == null)
-            {
-                throw new KeyNotFoundException($"Doctor with ID {id} not found.");
-            }
-            await _doctorRepository.DeleteAsync(doctor);
+            return await _doctorRepository.GetByBranchAsync(branch);
         }
 
-        public async Task<List<Patient>> GetAllPatientsAsync(int doctorId)
+        public async Task<Doctor> GetByIdAsync(int id)
         {
-            return await Task.FromResult(_doctorRepository.GetAllPatients(doctorId));
+            return await _doctorRepository.GetByIdAsync(id);
+        }
+
+        public async Task<List<Doctor>> GetDoctorsByRoleAsync(DRole role)
+        {
+            return await _doctorRepository.GetDoctorsByRoleAsync(role);
+        }
+
+        public async Task UpdateAsync(Doctor entity)
+        {
+            await _doctorRepository.UpdateAsync(entity.Id, entity);
         }
     }
 }

@@ -17,73 +17,64 @@ namespace HastaneRandevuSistemiAPI.Controllers
             _doctorService = doctorService;
         }
 
-        // Get All Doctors
+        // GET: api/doctor
         [HttpGet]
         public async Task<ActionResult<List<Doctor>>> GetAllDoctors()
         {
-            var doctors = await _doctorService.GetAllDoctorsAsync();
+            var doctors = await _doctorService.GetAllAsync();
             return Ok(doctors);
         }
 
-        // Get Doctor by ID
+        // GET: api/doctor/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Doctor>> GetDoctorById(int id)
         {
-            var doctor = await _doctorService.GetDoctorByIdAsync(id);
+            var doctor = await _doctorService.GetByIdAsync(id);
             if (doctor == null)
-                return NotFound($"Doctor with ID {id} not found.");
-
+            {
+                return NotFound();
+            }
             return Ok(doctor);
         }
 
-        // Create a new doctor
+        // POST: api/doctor
         [HttpPost]
-        public async Task<ActionResult> AddDoctor([FromBody] Doctor doctor)
+        public async Task<ActionResult<Doctor>> CreateDoctor([FromBody] Doctor doctor)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (doctor == null)
+            {
+                return BadRequest("Doctor data is null.");
+            }
 
-            await _doctorService.AddDoctorAsync(doctor);
+            await _doctorService.AddAsync(doctor);
             return CreatedAtAction(nameof(GetDoctorById), new { id = doctor.Id }, doctor);
         }
 
-        // Update an existing doctor
+        // PUT: api/doctor/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateDoctor(int id, [FromBody] Doctor doctor)
+        public async Task<IActionResult> UpdateDoctor(int id, [FromBody] Doctor doctor)
         {
             if (id != doctor.Id)
-                return BadRequest("Doctor ID does not match.");
-
-            var existingDoctor = await _doctorService.GetDoctorByIdAsync(id);
-            if (existingDoctor == null)
-                return NotFound($"Doctor with ID {id} not found.");
-
-            await _doctorService.UpdateDoctorAsync(doctor);
-            return NoContent();
-        }
-
-        // Delete a doctor
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteDoctor(int id)
-        {
-            var doctor = await _doctorService.GetDoctorByIdAsync(id);
-            if (doctor == null)
-                return NotFound($"Doctor with ID {id} not found.");
-
-            await _doctorService.DeleteDoctorAsync(id);
-            return NoContent();
-        }
-
-        // Get all patients for a specific doctor
-        [HttpGet("{doctorId}/patients")]
-        public async Task<IActionResult> GetAllPatientsByDoctor(int doctorId)
-        {
-            var patients = await _doctorService.GetAllPatientsAsync(doctorId);
-            if (patients == null || patients.Count == 0)
             {
-                return NotFound($"No patients found for doctor with ID {doctorId}");
+                return BadRequest("Doctor ID mismatch.");
             }
-            return Ok(patients);
+
+            await _doctorService.UpdateAsync(doctor);
+            return NoContent();
+        }
+
+        // DELETE: api/doctor/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDoctor(int id)
+        {
+            var doctor = await _doctorService.GetByIdAsync(id);
+            if (doctor == null)
+            {
+                return NotFound();
+            }
+
+            await _doctorService.DeleteAsync(doctor);
+            return NoContent();
         }
     }
 }

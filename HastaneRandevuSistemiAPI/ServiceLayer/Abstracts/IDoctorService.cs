@@ -1,16 +1,16 @@
 ﻿using HastaneRandevuSistemiAPI.Models.Entities;
+using HastaneRandevuSistemiAPI.Models.Entities.Enums;
+using HastaneRandevuSistemiAPI.Services.Abstract;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HastaneRandevuSistemiAPI.ServiceLayer.Abstracts
 {
-    public interface IDoctorService
+    public interface IDoctorService: IEntityService<Doctor,int>
     {
-        Task AddDoctorAsync(Doctor doctor);
-        Task<Doctor> GetDoctorByIdAsync(int id);
-        Task<List<Doctor>> GetAllDoctorsAsync();
-        Task UpdateDoctorAsync(Doctor doctor);
-        Task DeleteDoctorAsync(int id);
-        Task<List<Patient>> GetAllPatientsAsync(int doctorId);
+
+        Task<Doctor> GetByBranchAsync(Branch branch);
+        Task<List<Doctor>> GetAllDoctorsWithAppointmentsAsync();
+        Task<List<Doctor>> GetDoctorsByRoleAsync(DRole role);
     }
 }

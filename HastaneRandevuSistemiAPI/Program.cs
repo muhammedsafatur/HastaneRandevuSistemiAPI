@@ -1,4 +1,5 @@
 using HastaneRandevuSistemiAPI.Contexts;
+using HastaneRandevuSistemiAPI.ServiceLayer.Abstracts;
 using HastaneRandevuSistemiAPI.ServiceLayer.Concretes;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,10 @@ builder.Services.AddSwaggerGen();
 // HospitalDbContext'i DI container'a ekle
 builder.Services.AddDbContext<HospitalDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Add scoped services
-builder.Services.AddScoped<AppointmentcCleanUpService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 var app = builder.Build();
 

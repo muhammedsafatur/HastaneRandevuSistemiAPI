@@ -1,10 +1,8 @@
 ﻿using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.Repositories.Abstract;
 using HastaneRandevuSistemiAPI.ServiceLayer.Abstracts;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq; // IQueryable için gerekli
 using System.Threading.Tasks;
 
 namespace HastaneRandevuSistemiAPI.ServiceLayer.Concretes
@@ -18,83 +16,39 @@ namespace HastaneRandevuSistemiAPI.ServiceLayer.Concretes
             _appointmentRepository = appointmentRepository;
         }
 
-        public async Task AddAppointmentAsync(Appointment appointment)
+        public async Task AddAsync(Appointment entity)
         {
-            if (appointment == null)
-            {
-                throw new ArgumentNullException(nameof(appointment), "Appointment cannot be null.");
-            }
-            await _appointmentRepository.AddAsync(appointment);
+            await _appointmentRepository.AddAsync(entity);
         }
 
-        public async Task<Appointment> GetAppointmentByIdAsync(Guid id)
+        public async Task DeleteAsync(Appointment entity)
         {
-            var appointment = await _appointmentRepository.GetByIdAsync(id);
-            if (appointment == null)
-            {
-                throw new KeyNotFoundException($"Appointment with ID {id} not found.");
-            }
-            return appointment;
+            await _appointmentRepository.DeleteAsync(entity.Id);
         }
 
-        public async Task<List<Appointment>> GetAllAppointmentsAsync()
+        public async Task<List<Appointment>> GetAllAsync()
         {
-            return await _appointmentRepository.GetAll().ToListAsync();
-        }
-
-        public async Task UpdateAppointmentAsync(Appointment appointment)
-        {
-            if (appointment == null)
-            {
-                throw new ArgumentNullException(nameof(appointment), "Appointment cannot be null.");
-            }
-            var existingAppointment = await _appointmentRepository.GetByIdAsync(appointment.Id);
-            if (existingAppointment == null)
-            {
-                throw new KeyNotFoundException($"Appointment with ID {appointment.Id} not found.");
-            }
-            await _appointmentRepository.UpdateAsync(appointment);
-        }
-
-        public async Task DeleteAppointmentAsync(Guid id)
-        {
-            var appointment = await _appointmentRepository.GetByIdAsync(id);
-            if (appointment == null)
-            {
-                throw new KeyNotFoundException($"Appointment with ID {id} not found.");
-            }
-            await _appointmentRepository.DeleteAsync(appointment);
-        }
-
-        public async Task<List<Appointment>> GetByDoctorIdAsync(int doctorId)
-        {
-            var appointments = await _appointmentRepository.GetByDoctorIdAsync(doctorId);
-            if (appointments == null || !appointments.Any())
-            {
-                throw new KeyNotFoundException($"No appointments found for doctor ID {doctorId}.");
-            }
-            return appointments;
+            return await _appointmentRepository.GetAllAsync();
         }
 
         public async Task<List<Appointment>> GetByDateAsync(DateTime date)
         {
-            var appointments = await _appointmentRepository.GetByDateAsync(date);
-            if (appointments == null || !appointments.Any())
-            {
-                throw new KeyNotFoundException($"No appointments found for the date {date.ToShortDateString()}.");
-            }
-            return appointments;
+            return await _appointmentRepository.GetByDateAsync(date);
         }
 
-        public IQueryable<Appointment> GetAll()
+        public async Task<List<Appointment>> GetByDoctorIdAsync(int doctorId)
         {
-            return _appointmentRepository.GetAll(); // Repository'den tüm randevuları alır
+            return await _appointmentRepository.GetByDoctorIdAsync(doctorId);
         }
 
-        // IAppointmentService arayüzündeki tanımlı metoda uygun dönüş tipi
-        Task<List<Appointment>> IAppointmentService.GetByDoctorIdAsync(int doctorId)
+        public async Task<Appointment> GetByIdAsync(Guid id)
         {
-            return GetByDoctorIdAsync(doctorId); // Yukarıda tanımlanan metod kullanılır
+            return await _appointmentRepository.GetByIdAsync(id);
+        }
+
+        public async Task UpdateAsync(Appointment entity)
+        {
+            await _appointmentRepository.UpdateAsync(entity.Id, entity);
         }
     }
 }

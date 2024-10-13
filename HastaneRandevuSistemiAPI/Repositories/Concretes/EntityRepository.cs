@@ -1,8 +1,7 @@
 ﻿using HastaneRandevuSistemiAPI.Contexts;
-using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.Repository.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
@@ -22,15 +21,19 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(TKey id)
         {
-            _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
+            {
+                _context.Set<T>().Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public IQueryable<T> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
-            return _context.Set<T>().AsQueryable();
+            return await _context.Set<T>().ToListAsync();
         }
 
         public async Task<T> GetByIdAsync(TKey id)
@@ -38,10 +41,14 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(TKey id, T entity)
         {
-            _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
+            var existingEntity = await GetByIdAsync(id);
+            if (existingEntity != null)
+            {
+                _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -24,27 +24,19 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Appointment entity)
+        public async Task DeleteAsync(Guid id)
         {
-            _context.Appointments.Remove(entity);
-            await _context.SaveChangesAsync();
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment != null)
+            {
+                _context.Appointments.Remove(appointment);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public IQueryable<Appointment> GetAll()
+        public async Task<List<Appointment>> GetAllAsync()
         {
-            return _context.Appointments.AsQueryable();
-        }
-
-        public async Task<Appointment> GetByIdAsync(Guid id)
-        {
-            return await _context.Appointments.FindAsync(id);
-        }
-
-        public async Task<List<Appointment>> GetByDoctorIdAsync(int doctorId)
-        {
-            return await _context.Appointments
-                .Where(a => a.DoctorId == doctorId)
-                .ToListAsync();
+            return await _context.Appointments.ToListAsync();
         }
 
         public async Task<List<Appointment>> GetByDateAsync(DateTime date)
@@ -54,10 +46,32 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
                 .ToListAsync();
         }
 
-        public async Task UpdateAsync(Appointment entity)
+        public async Task<List<Appointment>> GetByDoctorIdAsync(int doctorId)
         {
-            _context.Appointments.Update(entity);
-            await _context.SaveChangesAsync();
+            return await _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .ToListAsync();
         }
+
+        public async Task<Appointment> GetByIdAsync(Guid id)
+        {
+            return await _context.Appointments.FindAsync(id);
+        }
+
+        public async Task UpdateAsync(Guid id, Appointment entity)
+        {
+            var appointment = await GetByIdAsync(id);
+            if (appointment != null)
+            {
+                appointment.AppointmentDate = entity.AppointmentDate;
+                appointment.DoctorId = entity.DoctorId;
+                appointment.Title = entity.Title;
+                appointment.PatientTc = entity.PatientTc;
+                appointment.Branch = entity.Branch;
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

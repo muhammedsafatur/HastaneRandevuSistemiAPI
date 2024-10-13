@@ -1,5 +1,6 @@
 ﻿using HastaneRandevuSistemiAPI.Contexts;
 using HastaneRandevuSistemiAPI.Models.Entities;
+using HastaneRandevuSistemiAPI.Models.Entities.Enums;
 using HastaneRandevuSistemiAPI.Repositories.Abstract;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -23,15 +24,32 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Doctor entity)
+        public async Task DeleteAsync(int id)
         {
-            _context.Doctors.Remove(entity);
-            await _context.SaveChangesAsync();
+            var doctor = await _context.Doctors.FindAsync(id);
+            if (doctor != null)
+            {
+                _context.Doctors.Remove(doctor);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public IQueryable<Doctor> GetAll()
+        public async Task<List<Doctor>> GetAllAsync()
         {
-            return _context.Doctors.AsQueryable();
+            return await _context.Doctors.ToListAsync();
+        }
+
+        public async Task<List<Doctor>> GetAllDoctorsWithAppointmentsAsync()
+        {
+            return await _context.Doctors
+                .Include(d => d.Appointments)
+                .ToListAsync();
+        }
+
+        public async Task<Doctor> GetByBranchAsync(Branch branch)
+        {
+            return await _context.Doctors
+                .FirstOrDefaultAsync(d => d.Branch == branch);
         }
 
         public async Task<Doctor> GetByIdAsync(int id)
@@ -39,18 +57,24 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
             return await _context.Doctors.FindAsync(id);
         }
 
-        public async Task UpdateAsync(Doctor entity)
+        public async Task UpdateAsync(int id, Doctor entity)
         {
-            _context.Doctors.Update(entity);
-            await _context.SaveChangesAsync();
+            var doctor = await GetByIdAsync(id);
+            if (doctor != null)
+            {
+                doctor.Name = entity.Name;
+                doctor.Branch = entity.Branch;
+                doctor.Role = entity.Role;
+
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<List<Doctor>> GetDoctorsByRoleAsync(DRole role)
+        {
+            return await _context.Doctors
+                .Where(d => d.Role == role)
+                .ToListAsync();
         }
 
-        public List<Patient> GetAllPatients(int doctorId)
-        {
-            return _context.Appointments
-                .Where(a => a.DoctorId == doctorId)
-                .Select(a => a.Patient)
-                .ToList();
-        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.ServiceLayer.Abstracts;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,60 +17,63 @@ namespace HastaneRandevuSistemiAPI.Controllers
             _patientService = patientService;
         }
 
-        // Get All Patients
+        // GET: api/patient
         [HttpGet]
         public async Task<ActionResult<List<Patient>>> GetAllPatients()
         {
-            var patients = await _patientService.GetAllPatientsAsync();
+            var patients = await _patientService.GetAllAsync();
             return Ok(patients);
         }
 
-        // Get Patient by TC
-        [HttpGet("{tc}")]
-        public async Task<ActionResult<Patient>> GetPatientByTc(string tc)
+        // GET: api/patient/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Patient>> GetPatientById(string id)
         {
-            var patient = await _patientService.GetPatientByTcAsync(tc);
+            var patient = await _patientService.GetByIdAsync(id);
             if (patient == null)
-                return NotFound($"Patient with TC {tc} not found.");
-
+            {
+                return NotFound();
+            }
             return Ok(patient);
         }
 
-        // Create a new patient
+        // POST: api/patient
         [HttpPost]
-        public async Task<ActionResult> AddPatient([FromBody] Patient patient)
+        public async Task<ActionResult<Patient>> CreatePatient([FromBody] Patient patient)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (patient == null)
+            {
+                return BadRequest("Patient data is null.");
+            }
 
-            await _patientService.AddPatientAsync(patient);
-            return CreatedAtAction(nameof(GetPatientByTc), new { tc = patient.Tc }, patient);
+            await _patientService.AddAsync(patient);
+            return CreatedAtAction(nameof(GetPatientById), new { id = patient.Tc }, patient);
         }
 
-        // Update an existing patient
-        [HttpPut("{tc}")]
-        public async Task<ActionResult> UpdatePatient(string tc, [FromBody] Patient patient)
+        // PUT: api/patient/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePatient(string id, [FromBody] Patient patient)
         {
-            if (tc != patient.Tc)
-                return BadRequest("TC number does not match.");
+            if (id != patient.Tc)
+            {
+                return BadRequest("Patient TC mismatch.");
+            }
 
-            var existingPatient = await _patientService.GetPatientByTcAsync(tc);
-            if (existingPatient == null)
-                return NotFound($"Patient with TC {tc} not found.");
-
-            await _patientService.UpdatePatientAsync(patient);
+            await _patientService.UpdateAsync(patient);
             return NoContent();
         }
 
-        // Delete a patient
-        [HttpDelete("{tc}")]
-        public async Task<ActionResult> DeletePatient(string tc)
+        // DELETE: api/patient/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePatient(string id)
         {
-            var patient = await _patientService.GetPatientByTcAsync(tc);
+            var patient = await _patientService.GetByIdAsync(id);
             if (patient == null)
-                return NotFound($"Patient with TC {tc} not found.");
+            {
+                return NotFound();
+            }
 
-            await _patientService.DeletePatientAsync(tc);
+            await _patientService.DeleteAsync(patient);
             return NoContent();
         }
     }

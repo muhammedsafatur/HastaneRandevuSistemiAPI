@@ -17,75 +17,59 @@ namespace HastaneRandevuSistemiAPI.Controllers
             _appointmentService = appointmentService;
         }
 
-        // Add a new appointment
-        [HttpPost]
-        public async Task<IActionResult> AddAppointment([FromBody] Appointment appointment)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
         {
             if (appointment == null)
+            {
                 return BadRequest("Appointment cannot be null.");
+            }
 
-            await _appointmentService.AddAppointmentAsync(appointment);
-            return Ok("Appointment added successfully.");
+            await _appointmentService.AddAsync(appointment);
+            return CreatedAtAction(nameof(GetAppointmentById), new { id = appointment.Id }, appointment);
         }
 
-        // Get appointment by ID
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetAppointmentById(Guid id)
         {
-            var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
+            var appointment = await _appointmentService.GetByIdAsync(id);
             if (appointment == null)
-                return NotFound($"Appointment with ID {id} not found.");
-
+            {
+                return NotFound();
+            }
             return Ok(appointment);
         }
 
-        // Get all appointments
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAllAppointments()
         {
-            var appointments = await _appointmentService.GetAllAppointmentsAsync();
+            var appointments = await _appointmentService.GetAllAsync();
             return Ok(appointments);
         }
 
-        // Update an appointment
-        [HttpPut("UpdateAppointment{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateAppointment(Guid id, [FromBody] Appointment appointment)
         {
-            if (appointment == null || appointment.Id != id)
-                return BadRequest("Invalid appointment data.");
+            if (id != appointment.Id)
+            {
+                return BadRequest("Appointment ID mismatch.");
+            }
 
-            await _appointmentService.UpdateAppointmentAsync(appointment);
-            return Ok("Appointment updated successfully.");
+            await _appointmentService.UpdateAsync(appointment);
+            return NoContent();
         }
 
-        // Delete an appointment
-        [HttpDelete("DeleteAppointment{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteAppointment(Guid id)
         {
-            await _appointmentService.DeleteAppointmentAsync(id);
-            return Ok("Appointment deleted successfully.");
-        }
+            var appointment = await _appointmentService.GetByIdAsync(id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
 
-        // Get appointments by doctor ID
-        [HttpGet("GetAppointmentsByDoctorId/{doctorId}")]
-        public async Task<IActionResult> GetAppointmentsByDoctor(int doctorId)
-        {
-            var appointments = await _appointmentService.GetByDoctorIdAsync(doctorId);
-            if (appointments == null || appointments.Count == 0)
-                return NotFound($"No appointments found for doctor with ID {doctorId}.");
-
-            return Ok(appointments);
-        }
-
-        // Get appointments by date
-        [HttpGet("date/{date}")]
-        public async Task<IActionResult> GetAppointmentsByDate(DateTime date)
-        {
-            var appointments = await _appointmentService.GetByDateAsync(date);
-            if (appointments == null || appointments.Count == 0)
-                return NotFound($"No appointments found on date {date.ToShortDateString()}.");
-
-            return Ok(appointments);
+            await _appointmentService.DeleteAsync(appointment);
+            return NoContent();
         }
     }
 }

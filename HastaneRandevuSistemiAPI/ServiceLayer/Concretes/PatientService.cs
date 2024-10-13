@@ -1,7 +1,6 @@
 ﻿using HastaneRandevuSistemiAPI.Models.Entities;
 using HastaneRandevuSistemiAPI.Repositories.Abstract;
 using HastaneRandevuSistemiAPI.ServiceLayer.Abstracts;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,62 +16,19 @@ namespace HastaneRandevuSistemiAPI.ServiceLayer.Concretes
             _patientRepository = patientRepository;
         }
 
-        public async Task AddPatientAsync(Patient patient)
+        public async Task AddAsync(Patient entity)
         {
-            if (patient == null)
-            {
-                throw new ArgumentNullException(nameof(patient), "Patient cannot be null.");
-            }
-            await _patientRepository.AddAsync(patient);
+            await _patientRepository.AddAsync(entity);
         }
 
-        public async Task<Patient> GetPatientByIdAsync(string id)
+        public async Task DeleteAsync(Patient entity)
         {
-            var patient = await _patientRepository.GetByIdAsync(id);
-            if (patient == null)
-            {
-                throw new KeyNotFoundException($"Patient with ID {id} not found.");
-            }
-            return patient;
+            await _patientRepository.DeleteAsync(entity.Id); // ID özelliğini kullanarak silme
         }
 
-        public async Task<List<Patient>> GetAllPatientsAsync()
+        public async Task<List<Patient>> GetAllAsync()
         {
-            return await _patientRepository.GetAll().ToListAsync();
-        }
-
-        public async Task UpdatePatientAsync(Patient patient)
-        {
-            if (patient == null)
-            {
-                throw new ArgumentNullException(nameof(patient), "Patient cannot be null.");
-            }
-            var existingPatient = await _patientRepository.GetByIdAsync(patient.Id);
-            if (existingPatient == null)
-            {
-                throw new KeyNotFoundException($"Patient with ID {patient.Id} not found.");
-            }
-            await _patientRepository.UpdateAsync(patient);
-        }
-
-        public async Task DeletePatientAsync(string id)
-        {
-            var patient = await _patientRepository.GetByIdAsync(id);
-            if (patient == null)
-            {
-                throw new KeyNotFoundException($"Patient with ID {id} not found.");
-            }
-            await _patientRepository.DeleteAsync(patient);
-        }
-
-        public async Task<Patient> GetPatientByTcAsync(string tc)
-        {
-            var patient = await _patientRepository.GetPatientbyTcAsync(tc);
-            if (patient == null)
-            {
-                throw new KeyNotFoundException($"Patient with TC {tc} not found.");
-            }
-            return patient;
+            return await _patientRepository.GetAllAsync();
         }
 
         public async Task<List<Patient>> GetAllPatientsByDoctorAsync(int doctorId)
@@ -80,5 +36,19 @@ namespace HastaneRandevuSistemiAPI.ServiceLayer.Concretes
             return await _patientRepository.GetAllPatientsByDoctorAsync(doctorId);
         }
 
+        public async Task<Patient> GetByIdAsync(string id)
+        {
+            return await _patientRepository.GetByIdAsync(id);
+        }
+
+        public async Task<Patient> GetPatientByTcAsync(string tc)
+        {
+            return await _patientRepository.GetPatientByTcAsync(tc);
+        }
+
+        public async Task UpdateAsync(Patient entity)
+        {
+            await _patientRepository.UpdateAsync(entity.Id, entity); // ID özelliğini kullanarak güncelleme
+        }
     }
 }

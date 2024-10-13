@@ -1,12 +1,15 @@
-﻿using HastaneRandevuSistemiAPI.Models.Entities;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using System.Linq;
+using System.Threading.Tasks;
 
-namespace HastaneRandevuSistemiAPI.Repository.Abstract;
-
-public interface IEntityRepository<T, TKey> where T : class, new()
+namespace HastaneRandevuSistemiAPI.Repository.Abstract
 {
-    IQueryable<T> GetAll();
-    Task<T> GetByIdAsync(TKey id);
-    Task AddAsync(T entity);
-    Task DeleteAsync(T entity);
+    public interface IEntityRepository<TEntity, TId>
+    {
+        Task<TEntity> GetByIdAsync(TId id);
+        Task<List<TEntity>> GetAllAsync(); // Bu metodu ekleyin
+        Task AddAsync(TEntity entity);
+        Task UpdateAsync(TId id, TEntity entity);
+        Task DeleteAsync(TId id );
+    }
+
 }
