@@ -7,6 +7,7 @@ namespace HastaneRandevuSistemiAPI.Repositories.Abstract
     public interface IAppointmentRepository:IEntityRepository<Appointment,Guid>
     {
         Appointment GetByDoc(int doctorId);
+        Appointment GetByDate(DateTime date);
         
     }
 }

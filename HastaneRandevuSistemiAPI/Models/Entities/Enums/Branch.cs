@@ -1,5 +1,6 @@
 ﻿namespace HastaneRandevuSistemiAPI.Models.Entities.Enums
 {
+
     public enum Branch
     {
         Genel,
