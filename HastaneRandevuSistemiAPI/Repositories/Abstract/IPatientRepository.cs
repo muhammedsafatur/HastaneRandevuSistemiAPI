@@ -6,4 +6,5 @@ public interface IPatientRepository : IEntityRepository<Patient, string>
 {
     Task<Patient> GetPatientbyTcAsync(string tc);
     Task<List<Patient>> GetAllPatientsByDoctorAsync(int id);
+    Task UpdateAsync(Patient entity); // Burayı ekleyin
 }

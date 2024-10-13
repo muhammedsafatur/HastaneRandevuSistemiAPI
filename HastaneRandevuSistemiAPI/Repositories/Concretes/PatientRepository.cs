@@ -65,5 +65,6 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
             _context.Patients.Update(entity);
             await _context.SaveChangesAsync();
         }
+
     }
 }

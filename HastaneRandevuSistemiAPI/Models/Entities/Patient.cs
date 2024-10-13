@@ -9,7 +9,7 @@ namespace HastaneRandevuSistemiAPI.Models.Entities
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public List<Appointment> Appointments { get; set; }=new List<Appointment>();
-
+        public ICollection<DoctorPatient> DoctorPatients { get; set; } // Many-to-Many ilişkisi
         public Branch branch { get; set; }
         public static explicit operator Patient(AddPatientRequestDto dto)
         {
