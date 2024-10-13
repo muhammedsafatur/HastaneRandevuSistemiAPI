@@ -11,11 +11,13 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         // Appointment Mappings
-        CreateMap<AddAppointmentRequestDto, Appointment>();
+        CreateMap<AddAppointmentRequestDto, Appointment>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid())); // ID'yi otomatik oluştur
         CreateMap<Appointment, AppointmentResponseDto>();
 
         // Doctor Mappings
-        CreateMap<AddDoctorRequestDto, Doctor>();
+        CreateMap<AddDoctorRequestDto, Doctor>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => 0)); // ID ataması yapılabilir
         CreateMap<Doctor, DoctorResponseDto>();
 
         // Patient Mappings

@@ -8,7 +8,9 @@ namespace HastaneRandevuSistemiAPI.Repositories.Abstract
 {
     public interface IAppointmentRepository : IEntityRepository<Appointment, Guid>
     {
+
         Task<List<Appointment>> GetByDateAsync(DateTime date);
         Task<List<Appointment>> GetByDoctorIdAsync(int doctorId);
+        Task<List<Appointment>> GetExpiredAppointmentsAsync();
     }
 }

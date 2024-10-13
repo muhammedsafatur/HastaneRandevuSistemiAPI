@@ -11,12 +11,16 @@ public class AppointmentValidator : BaseValidator<AddAppointmentRequestDto>
         RuleFor(x => x.PatientTc)
             .NotEmpty().WithMessage("Patient TC cannot be empty.")
             .Matches(@"^\d{11}$").WithMessage("Patient TC must be exactly 11 digits.");
+
+        RuleFor(x => x.AppointmentDate)
+            .NotEmpty().WithMessage("Appointment date cannot be empty.")
+            .GreaterThan(DateTime.Now.AddDays(3)).WithMessage("Appointment date must be at least 3 days in the future.");
     }
 
+    // İstenmeyen bir durum olduğu için GetId metodunu kaldırıyoruz.
     protected override int GetId(AddAppointmentRequestDto instance)
     {
-        // Randevu için bir ID olmadığı için varsayılan bir değer döndürüyoruz.
-        return 0; // veya uygun bir değer döndürülmeli.
+        return 0; // Geçersiz, çünkü randevu için bir ID yok.
     }
 
     protected override DateTime GetDate(AddAppointmentRequestDto instance)

@@ -17,6 +17,12 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
         {
             _context = context;
         }
+        public async Task<List<Appointment>> GetExpiredAppointmentsAsync()
+        {
+            return await _context.Appointments
+                .Where(a => a.AppointmentDate < DateTime.Now)
+                .ToListAsync();
+        }
 
         public async Task AddAsync(Appointment entity)
         {
