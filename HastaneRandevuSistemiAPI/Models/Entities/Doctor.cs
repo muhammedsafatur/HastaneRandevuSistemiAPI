@@ -2,7 +2,7 @@
 
 namespace HastaneRandevuSistemiAPI.Models.Entities;
 
-public class Doctor:EntityBase<Doctor,int>
+public class Doctor:Entity<Doctor,int>
 {
 
     public Branch Branch { get; set; }
