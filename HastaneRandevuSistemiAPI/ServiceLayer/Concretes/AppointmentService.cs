@@ -16,10 +16,10 @@ namespace HastaneRandevuSistemiAPI.ServiceLayer.Concretes
         public AppointmentService(IAppointmentRepository appointmentRepository, IDoctorRepository doctorRepository)
         {
             _appointmentRepository = appointmentRepository;
-           
             _doctorRepository = doctorRepository;
         }
 
+        // Mevcut metotlar
         public async Task AddAsync(Appointment entity)
         {
             var doctor = await _doctorRepository.GetByIdAsync(entity.DoctorId);
@@ -35,7 +35,6 @@ namespace HastaneRandevuSistemiAPI.ServiceLayer.Concretes
 
             await _appointmentRepository.AddAsync(entity);
         }
-
 
         public async Task DeleteAsync(Appointment entity)
         {
@@ -65,6 +64,17 @@ namespace HastaneRandevuSistemiAPI.ServiceLayer.Concretes
         public async Task UpdateAsync(Appointment entity)
         {
             await _appointmentRepository.UpdateAsync(entity.Id, entity);
+        }
+
+        // Yeni eklenen metot
+        public async Task CleanupOldAppointmentsAsync()
+        {
+            var expiredAppointments = await _appointmentRepository.GetExpiredAppointmentsAsync();
+
+            foreach (var appointment in expiredAppointments)
+            {
+                await _appointmentRepository.DeleteAsync(appointment.Id);
+            }
         }
     }
 }

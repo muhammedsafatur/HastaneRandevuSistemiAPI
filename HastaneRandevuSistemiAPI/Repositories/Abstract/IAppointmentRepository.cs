@@ -12,5 +12,7 @@ namespace HastaneRandevuSistemiAPI.Repositories.Abstract
         Task<List<Appointment>> GetByDateAsync(DateTime date);
         Task<List<Appointment>> GetByDoctorIdAsync(int doctorId);
         Task<List<Appointment>> GetExpiredAppointmentsAsync();
+        Task<IEnumerable<Appointment>> GetAppointmentsOlderThanAsync(DateTime dateTime);
+
     }
 }

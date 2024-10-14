@@ -78,6 +78,12 @@ namespace HastaneRandevuSistemiAPI.DataAccesLayer.Concrete
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<IEnumerable<Appointment>> GetAppointmentsOlderThanAsync(DateTime dateTime)
+        {
+            return await _context.Appointments
+                .Where(a => a.AppointmentDate < dateTime)
+                .ToListAsync();
+        }
 
     }
 }

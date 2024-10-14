@@ -32,8 +32,6 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>(); // DoctorService'i eklemeyi unutmayýn.
 
-// CleanupAppointmentsService'i yalnýzca bir kez kaydet
-builder.Services.AddHostedService<CleanupAppointmentsService>(); // Bu satýrý güncelledim
 
 // Register validators
 builder.Services.AddTransient<IValidator<AddPatientRequestDto>, PatientValidator>();
