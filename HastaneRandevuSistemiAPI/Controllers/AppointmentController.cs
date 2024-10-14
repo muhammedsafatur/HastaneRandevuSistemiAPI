@@ -16,11 +16,13 @@ namespace HastaneRandevuSistemiAPI.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
+        private readonly CleanupAppointmentsService _cleanupAppointmentService; // Servisi doğrudan kullanacağız
         private readonly IValidator<AddAppointmentRequestDto> _addAppointmentValidator;
 
-        public AppointmentController(IAppointmentService appointmentService, IValidator<AddAppointmentRequestDto> addAppointmentValidator)
+        public AppointmentController(IAppointmentService appointmentService, CleanupAppointmentsService cleanupAppointmentService, IValidator<AddAppointmentRequestDto> addAppointmentValidator)
         {
             _appointmentService = appointmentService;
+            _cleanupAppointmentService = cleanupAppointmentService;
             _addAppointmentValidator = addAppointmentValidator;
         }
 
@@ -76,6 +78,20 @@ namespace HastaneRandevuSistemiAPI.Controllers
                 Data = appointment
             });
         }
+
+
+        [HttpPost("cleanup-expired-appointments")]
+        public async Task<IActionResult> CleanupExpiredAppointments()
+        {
+            await _cleanupAppointmentService.CleanupExpiredAppointments(); // Manuel temizlik işlemi başlatılır
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Expired appointments cleaned up successfully.",
+                Data = "Cleanup completed."
+            });
+        }
+
 
         [HttpGet("get/{id}")]
         public async Task<IActionResult> GetAppointmentById(Guid id)
@@ -157,7 +173,7 @@ namespace HastaneRandevuSistemiAPI.Controllers
         [HttpGet("getall")]
         public async Task<IActionResult> GetAllAppointments()
         {
-            var appointments = await _appointmentService.GetAllAsync(); // Bu metodun var olduğundan emin olun
+            var appointments = await _appointmentService.GetAllAsync(); 
             return Ok(new ApiResponse<IEnumerable<Appointment>>
             {
                 Success = true,

@@ -28,7 +28,7 @@ public class CleanupAppointmentsService : IHostedService, IDisposable
         return Task.CompletedTask;
     }
 
-    private async Task CleanupExpiredAppointments()
+    public async Task CleanupExpiredAppointments()
     {
         using (var scope = _serviceProvider.CreateScope())
         {
